@@ -71,9 +71,10 @@ export default function ResultLit() {
 
    
    const renderItems = ({item})=> (
+    <TouchableOpacity onPress={()=> console.log("nome do character",item.name)}>
     <View style={styles.characterContainer}>
     <Text style={styles.characterLabel}>Name:</Text>
-    <Text testID="name-character" style={styles.characterLabelText}>{item.name}</Text>
+    <Text style={styles.characterLabelText}>{item.name}</Text>
     <Text style={styles.characterLabel}>Gender:</Text>
     <Text style={styles.characterLabelText}>{item.gender}</Text>
     <Text style={styles.characterLabel}>Height:</Text>
@@ -87,6 +88,7 @@ export default function ResultLit() {
     <Text style={styles.characterLabel}>SkinColor:</Text>
     <Text style={styles.characterLabelText}>{item.skin_color}</Text>
   </View>
+  </TouchableOpacity>
    )
 
   return (
