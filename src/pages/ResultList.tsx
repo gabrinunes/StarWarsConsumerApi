@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, Text, StyleSheet,ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../service/api';
 import {useRoute, useNavigation} from '@react-navigation/native';
@@ -22,18 +22,13 @@ interface Characters {
   starships: Array<string>;
 }
 
-interface Planet {
-  name: string;
-}
 
 export default function ResultLit() {
   const route = useRoute();
-  //const {goBack} = useNavigation();
   const [page,SetPage] = useState(1)
   const [loading,SetLoading] = useState<boolean>(false)
   const [character, SetCharacter] = useState<Characters[]>([]);
-  const [planets, SetPlanets] = useState<Planet | undefined>();
-  //const searchText = route.params.search;
+  const [loadingMoreData,SetLoadingMoreData] = useState<boolean>(true)
   const navigation = useNavigation();
   useEffect(() => {
     api
@@ -41,9 +36,6 @@ export default function ResultLit() {
       .then((res) => SetCharacter([...res.data.results]));
   }, []);
 
-  function handleSelected(payload: string) {
-    navigation.navigate('Detail', {payload});
-  }
 
   async function handlePagination(){
     SetPage(page + 1)
@@ -52,36 +44,38 @@ export default function ResultLit() {
     }
     SetLoading(true)
     const response = await api.get(`people/?page=${page}`)
+    response.data.next ? null : SetLoadingMoreData(false)
     SetLoading(false)
     SetCharacter([...character,...response.data.results])
-    console.log("chamando quantas vez",page,character)
   }
 
 
-  if (!character) {
-    return <Text>Carregando...</Text>;
-  }
-
+  
   if (character.length === 0) {
     return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text style={{fontSize: 16}}>
-          Não foi possível encontrar o personagem buscado :(
-        </Text>
-         {/* <TouchableOpacity style={styles.BackHomeButton} onPress={()=> navigation.goBack()}>
-          <Text style={styles.BackHomeButtonText}>Home</Text>
-        </TouchableOpacity>  */}
+      <ActivityIndicator size="large" color="black"/>
       </View>
     );
+  }
+
+  function footerList() {
+    return (
+      <>
+      {loadingMoreData ? (
+      <ActivityIndicator size="large" color="black"/>
+      ):null}
+      </>
+    )
   }
 
   return (
     <View style={{flex:1}}>
       <FlatList 
       data={character}
-      keyExtractor = {people => String(people.created)}
       onEndReached={handlePagination}
       onEndReachedThreshold={0.2}
+      ListFooterComponent={footerList}
       renderItem={({item:people})=> (
         <TouchableOpacity onPress={()=> console.log("nome do character",people.name)}>
         <View style={styles.characterContainer}>
@@ -91,7 +85,14 @@ export default function ResultLit() {
         <Text style={styles.characterLabelText}>{people.gender}</Text>
         <Text style={styles.characterLabel}>Height:</Text>
         <Text style={styles.characterLabelText}>{people.height}</Text>
-        <Text style={styles.characterLabel}>HomeWorld:</Text>
+        <Text style={styles.characterLabel}>mass:</Text>
+        <Text style={styles.characterLabelText}>{people.mass}</Text>
+        <Text style={styles.characterLabel}>HairColor:</Text>
+        <Text style={styles.characterLabelText}>{people.hair_color}</Text>
+        <Text style={styles.characterLabel}>BirthYear:</Text>
+        <Text style={styles.characterLabelText}>{people.birth_year}</Text>
+        <Text style={styles.characterLabel}>SkinColor:</Text>
+        <Text style={styles.characterLabelText}>{people.skin_color}</Text>
       </View>
       </TouchableOpacity>
       )}
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
   characterContainer: {
     flex:1,
     padding: 24,
-    borderRadius: 8,
+    borderRadius: 12,
     backgroundColor: '#FFF',
     marginBottom: 10,
     marginTop: 28,
