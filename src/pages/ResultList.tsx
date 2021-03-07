@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useMemo} from 'react';
 import {View, Text, StyleSheet,ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../service/api';
@@ -69,6 +69,26 @@ export default function ResultLit() {
     )
   }
 
+   
+   const renderItems = ({item})=> (
+    <View style={styles.characterContainer}>
+    <Text style={styles.characterLabel}>Name:</Text>
+    <Text testID="name-character" style={styles.characterLabelText}>{item.name}</Text>
+    <Text style={styles.characterLabel}>Gender:</Text>
+    <Text style={styles.characterLabelText}>{item.gender}</Text>
+    <Text style={styles.characterLabel}>Height:</Text>
+    <Text style={styles.characterLabelText}>{item.height}</Text>
+    <Text style={styles.characterLabel}>mass:</Text>
+    <Text style={styles.characterLabelText}>{item.mass}</Text>
+    <Text style={styles.characterLabel}>HairColor:</Text>
+    <Text style={styles.characterLabelText}>{item.hair_color}</Text>
+    <Text style={styles.characterLabel}>BirthYear:</Text>
+    <Text style={styles.characterLabelText}>{item.birth_year}</Text>
+    <Text style={styles.characterLabel}>SkinColor:</Text>
+    <Text style={styles.characterLabelText}>{item.skin_color}</Text>
+  </View>
+   )
+
   return (
     <View style={{flex:1}}>
       <FlatList 
@@ -76,26 +96,7 @@ export default function ResultLit() {
       onEndReached={handlePagination}
       onEndReachedThreshold={0.2}
       ListFooterComponent={footerList}
-      renderItem={({item:people})=> (
-        <TouchableOpacity onPress={()=> console.log("nome do character",people.name)}>
-        <View style={styles.characterContainer}>
-        <Text style={styles.characterLabel}>Name:</Text>
-        <Text style={styles.characterLabelText}>{people.name}</Text>
-        <Text style={styles.characterLabel}>Gender:</Text>
-        <Text style={styles.characterLabelText}>{people.gender}</Text>
-        <Text style={styles.characterLabel}>Height:</Text>
-        <Text style={styles.characterLabelText}>{people.height}</Text>
-        <Text style={styles.characterLabel}>mass:</Text>
-        <Text style={styles.characterLabelText}>{people.mass}</Text>
-        <Text style={styles.characterLabel}>HairColor:</Text>
-        <Text style={styles.characterLabelText}>{people.hair_color}</Text>
-        <Text style={styles.characterLabel}>BirthYear:</Text>
-        <Text style={styles.characterLabelText}>{people.birth_year}</Text>
-        <Text style={styles.characterLabel}>SkinColor:</Text>
-        <Text style={styles.characterLabelText}>{people.skin_color}</Text>
-      </View>
-      </TouchableOpacity>
-      )}
+      renderItem={renderItems}
       >
       </FlatList>
     </View>
